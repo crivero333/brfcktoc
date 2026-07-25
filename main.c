@@ -5,6 +5,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 
 FILE *input;
 FILE *output;
@@ -14,8 +15,25 @@ void init_program(void);
 void end_program(void);
 
 int main(int argc, char *argv[]) {
-    input = fopen("../ex.txt", "r");
-    output = fopen("./test.c", "w");
+    //input = fopen("../ex.txt", "r");
+    //output = fopen("./test.c", "w");
+
+    if(argc != 5) {
+        printf("usage: bfktoc -i source -o output.c");
+        return 1;
+    }
+    
+    int i;
+    for(i = 1; i < argc; i++) {
+        if(strcmp(argv[i], "-i") == 0) {
+            ++i;
+            input = fopen(argv[i], "r");
+        }
+        else if(strcmp(argv[i], "-o") == 0) {
+            ++i;
+            output = fopen(argv[i], "w");
+        }
+    }
 
     init_program();
     char c;
@@ -24,8 +42,11 @@ int main(int argc, char *argv[]) {
     }
     end_program();
     return 0;
-}
 
+    fclose(input);
+    fclose(output);
+    return 0;
+}
 void putcmd(char c) {
     switch(c) {
     case '<':
@@ -54,7 +75,6 @@ void putcmd(char c) {
         break;
     }
 }
-
 void init_program(void) {
     fprintf(output, "#include <stdio.h>\n");
     fprintf(output, "#define MAXMEM 300000\n");
@@ -82,7 +102,6 @@ void init_program(void) {
     fprintf(output, "int main() {\n");
     fprintf(output, "\tinit();\n");
 }
-
 void end_program(void) {
     fprintf(output, "\treturn 0;\n");
     fprintf(output, "}");
