@@ -1,0 +1,11 @@
+# brfktoc: Brainfuck to C transpiler
+
+This programs converts given source code of the Brainfuck programming language into its equivalent source code in C.
+
+## Compile from source
+Just run `make` in your terminal emulator of preference :)
+
+## How to use
+```bash
+cat brainfuck_source | ./bfktoc
+```
