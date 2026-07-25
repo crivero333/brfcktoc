@@ -6,14 +6,20 @@
 
 #include <stdio.h>
 
+FILE *input;
+FILE *output;
+
 void putcmd(char);
 void init_program(void);
 void end_program(void);
 
-int main() {
+int main(int argc, char *argv[]) {
+    input = fopen("../ex.txt", "r");
+    output = fopen("./test.c", "w");
+
     init_program();
     char c;
-    while((c = getchar()) != EOF) {
+    while((c = getc(input)) != EOF) {
         putcmd(c);
     }
     end_program();
@@ -23,26 +29,26 @@ int main() {
 void putcmd(char c) {
     switch(c) {
     case '<':
-        printf("\tmove_left();\n");
+        fprintf(output, "\tmove_left();\n");
         break;
     case '>':
-        printf("\tmove_right();\n");
+        fprintf(output, "\tmove_right();\n");
         break;
     case '.':
-        printf("\tput_current();\n");
+        fprintf(output, "\tput_current();\n");
         break;
     case '+':
-        printf("\tincrement();\n");
+        fprintf(output, "\tincrement();\n");
         break;
     case '-':
-        printf("\tdecrement();\n");
+        fprintf(output, "\tdecrement();\n");
         break;
     case '[':
-        printf("\twhile(*current) {\n");
+        fprintf(output, "\twhile(*current) {\n");
         // handle whats inside the loop
         break;
     case ']':
-        printf("\t}\n");
+        fprintf(output, "\t}\n");
         break;
     default:
         break;
@@ -50,34 +56,34 @@ void putcmd(char c) {
 }
 
 void init_program(void) {
-    printf("#include <stdio.h>\n");
-    printf("#define MAXMEM 300000\n");
-    printf("unsigned char MEM[MAXMEM];\n");
-    printf("unsigned char *current = MEM;\n");
-    printf("void init() {\n");
-    printf("\tint i = 0;\n");
-    printf("\tfor(i = 0; i < MAXMEM; i++) MEM[i] = 0;\n");
-    printf("}\n");
-    printf("void increment() {(*current)++;}\n");
-    printf("void decrement() {(*current)--;}\n");
-    printf("void move_left() {\n");
-    printf("\tunsigned char* right = MEM+MAXMEM;\n");
-    printf("\tunsigned char* left = MEM;\n");
-    printf("\tif(current == left) current = right;\n");
-    printf("\telse current--;\n");
-    printf("}\n");
-    printf("void move_right() {\n");
-    printf("\tunsigned char* right = MEM+MAXMEM;\n");
-    printf("\tunsigned char* left = MEM;\n");
-    printf("\tif(current == right-1) current = left;\n");
-    printf("\telse current++;\n");
-    printf("}\n");
-    printf("void put_current() {putchar(*current);}\n");
-    printf("int main() {\n");
-    printf("\tinit();\n");
+    fprintf(output, "#include <stdio.h>\n");
+    fprintf(output, "#define MAXMEM 300000\n");
+    fprintf(output, "unsigned char MEM[MAXMEM];\n");
+    fprintf(output, "unsigned char *current = MEM;\n");
+    fprintf(output, "void init() {\n");
+    fprintf(output, "\tint i = 0;\n");
+    fprintf(output, "\tfor(i = 0; i < MAXMEM; i++) MEM[i] = 0;\n");
+    fprintf(output, "}\n");
+    fprintf(output, "void increment() {(*current)++;}\n");
+    fprintf(output, "void decrement() {(*current)--;}\n");
+    fprintf(output, "void move_left() {\n");
+    fprintf(output, "\tunsigned char* right = MEM+MAXMEM;\n");
+    fprintf(output, "\tunsigned char* left = MEM;\n");
+    fprintf(output, "\tif(current == left) current = right;\n");
+    fprintf(output, "\telse current--;\n");
+    fprintf(output, "}\n");
+    fprintf(output, "void move_right() {\n");
+    fprintf(output, "\tunsigned char* right = MEM+MAXMEM;\n");
+    fprintf(output, "\tunsigned char* left = MEM;\n");
+    fprintf(output, "\tif(current == right-1) current = left;\n");
+    fprintf(output, "\telse current++;\n");
+    fprintf(output, "}\n");
+    fprintf(output, "void put_current() {putchar(*current);}\n");
+    fprintf(output, "int main() {\n");
+    fprintf(output, "\tinit();\n");
 }
 
 void end_program(void) {
-    printf("\treturn 0;\n");
-    printf("}");
+    fprintf(output, "\treturn 0;\n");
+    fprintf(output, "}");
 }
