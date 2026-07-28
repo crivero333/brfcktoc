@@ -58,6 +58,9 @@ void putcmd(char c) {
     case '.':
         fprintf(output, "\tput_current();\n");
         break;
+    case ',':
+        fprintf(output, "\tget_current();\n");
+        break;
     case '+':
         fprintf(output, "\tincrement();\n");
         break;
@@ -77,7 +80,7 @@ void putcmd(char c) {
 }
 void init_program(void) {
     fprintf(output, "#include <stdio.h>\n");
-    fprintf(output, "#define MAXMEM 300000\n");
+    fprintf(output, "#define MAXMEM 30000\n");
     fprintf(output, "unsigned char MEM[MAXMEM];\n");
     fprintf(output, "unsigned char *current = MEM;\n");
     fprintf(output, "void init() {\n");
@@ -99,6 +102,7 @@ void init_program(void) {
     fprintf(output, "\telse current++;\n");
     fprintf(output, "}\n");
     fprintf(output, "void put_current() {putchar(*current);}\n");
+    fprintf(output, "void get_current() { *current = getchar(); }\n");
     fprintf(output, "int main() {\n");
     fprintf(output, "\tinit();\n");
 }
