@@ -52,6 +52,7 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 void putcmd(char c) {
+    static int loopstack = 0;
     switch(c) {
     case '<':
         fprintf(output, "\tmove_left();\n");
@@ -72,10 +73,15 @@ void putcmd(char c) {
         fprintf(output, "\tdecrement();\n");
         break;
     case '[':
+        loopstack++; // adds loop to the stack
         fprintf(output, "\twhile(*current) {\n");
-        // handle whats inside the loop
         break;
     case ']':
+        if(loopstack == 0) {
+            fprintf(stderr, "error: attempting to close uninitialized loop");
+            return;
+        }
+        loopstack--; // removes loop
         fprintf(output, "\t}\n");
         break;
     default:
