@@ -15,9 +15,6 @@ void init_program(void);
 void end_program(void);
 
 int main(int argc, char *argv[]) {
-    //input = fopen("../ex.txt", "r");
-    //output = fopen("./test.c", "w");
-
     if(argc != 5) {
         printf("usage: bfktoc -i source -o output.c");
         return 1;
@@ -28,20 +25,27 @@ int main(int argc, char *argv[]) {
         if(strcmp(argv[i], "-i") == 0) {
             ++i;
             input = fopen(argv[i], "r");
+            if(input == NULL) {
+                fprintf(stderr, "error loading input file\n");
+                return 1;
+            }
         }
         else if(strcmp(argv[i], "-o") == 0) {
             ++i;
             output = fopen(argv[i], "w");
+            if(output == NULL) {
+                fprintf(stderr, "error loading output file\n");
+                return 1;
+            }
         }
     }
 
     init_program();
-    char c;
+    int c;
     while((c = getc(input)) != EOF) {
         putcmd(c);
     }
     end_program();
-    return 0;
 
     fclose(input);
     fclose(output);
@@ -90,7 +94,7 @@ void init_program(void) {
     fprintf(output, "void increment() {(*current)++;}\n");
     fprintf(output, "void decrement() {(*current)--;}\n");
     fprintf(output, "void move_left() {\n");
-    fprintf(output, "\tunsigned char* right = MEM+MAXMEM;\n");
+    fprintf(output, "\tunsigned char* right = MEM+MAXMEM-1;\n");
     fprintf(output, "\tunsigned char* left = MEM;\n");
     fprintf(output, "\tif(current == left) current = right;\n");
     fprintf(output, "\telse current--;\n");
