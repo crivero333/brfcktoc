@@ -10,7 +10,7 @@
 FILE *input;
 FILE *output;
 
-void putcmd(char);
+int putcmd(char);
 void init_program(void);
 void end_program(void);
 
@@ -40,10 +40,16 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    // constructing the final program
     init_program();
     int c;
     while((c = getc(input)) != EOF) {
-        putcmd(c);
+        int puterr = putcmd(c);
+        if(puterr > 0) {
+            fclose(input);
+            fclose(output);
+            return puterr;
+        }
     }
     end_program();
 
@@ -51,41 +57,50 @@ int main(int argc, char *argv[]) {
     fclose(output);
     return 0;
 }
-void putcmd(char c) {
+int putcmd(char c) {
     static int loopstack = 0;
     switch(c) {
     case '<':
-        fprintf(output, "\tmove_left();\n");
-        break;
+        for(int i = 0; i < loopstack+1; i++) fprintf(output, "\t");
+        fprintf(output, "move_left();\n");
+        return 0;
     case '>':
-        fprintf(output, "\tmove_right();\n");
-        break;
+        for(int i = 0; i < loopstack+1; i++) fprintf(output, "\t");
+        fprintf(output, "move_right();\n");
+        return 0;
     case '.':
-        fprintf(output, "\tput_current();\n");
-        break;
+        for(int i = 0; i < loopstack+1; i++) fprintf(output, "\t");
+        fprintf(output, "put_current();\n");
+        return 0;
     case ',':
-        fprintf(output, "\tget_current();\n");
-        break;
+        for(int i = 0; i < loopstack+1; i++) fprintf(output, "\t");
+        fprintf(output, "get_current();\n");
+        return 0;
     case '+':
-        fprintf(output, "\tincrement();\n");
-        break;
+        for(int i = 0; i < loopstack+1; i++) fprintf(output, "\t");
+        fprintf(output, "increment();\n");
+        return 0;
     case '-':
-        fprintf(output, "\tdecrement();\n");
-        break;
+        for(int i = 0; i < loopstack+1; i++) fprintf(output, "\t");
+        fprintf(output, "decrement();\n");
+        return 0;
     case '[':
+        for(int i = 0; i < loopstack+1; i++) fprintf(output, "\t");
         loopstack++; // adds loop to the stack
-        fprintf(output, "\twhile(*current) {\n");
-        break;
+        fprintf(output, "while(*current) {\n");
+        return 0;
     case ']':
         if(loopstack == 0) {
-            fprintf(stderr, "error: attempting to close uninitialized loop");
-            return;
+            fprintf(stderr, "error: attempting to close uninitialized loop\n");
+            return 1;
         }
         loopstack--; // removes loop
-        fprintf(output, "\t}\n");
-        break;
+        for(int i = 0; i < loopstack+1; i++) fprintf(output, "\t");
+        fprintf(output, "}\n");
+        return 0;
     default:
-        break;
+        fprintf(stderr, "error: unrecognized command %c\n", c);
+        return 1;
     }
 }
 void init_program(void) {

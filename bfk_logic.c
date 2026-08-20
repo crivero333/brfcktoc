@@ -13,15 +13,15 @@ void init() {
 void increment() { (*current)++; }
 void decrement() { (*current)--; }
 void move_left() {
-    unsigned char* right = MEM+MAXMEM;
+    unsigned char* right = MEM+MAXMEM-1;
     unsigned char* left = MEM;
     if(current == left) current = right;
     else current--;
 }
 void move_right() {
-    unsigned char* right = MEM+MAXMEM;
+    unsigned char* right = MEM+MAXMEM-1;
     unsigned char* left = MEM;
-    if(current == right-1) current = left;
+    if(current == right) current = left;
     else current++;
 }
 void get_current() { *current = getchar(); }
