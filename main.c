@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
     }
 
     FILE *headerfile = NULL;
-    /** loading header file containing logic, somehow actual header file can lead to errors? **/
+    /** loading header file containing logic **/
     headerfile = fopen("brfck_logic.c", "r");
     if(headerfile == NULL) {
         fprintf(stderr, "error: could not load header file\n");
