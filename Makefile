@@ -1,2 +1,2 @@
 brfktoc: main.c
-	gcc -Wall -Wextra -pedantic -g main.c -o bfktoc
+	gcc -Wall -Wextra -pedantic -g main.c -o brfktoc

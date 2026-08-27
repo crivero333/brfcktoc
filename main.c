@@ -7,34 +7,45 @@
 #include <stdio.h>
 #include <string.h>
 
-FILE *input;
-FILE *output;
+FILE *input = NULL;
+FILE *output = NULL;
 
 int putcmd(char);
 void init_program(void);
 void end_program(void);
 
 int main(int argc, char *argv[]) {
-    if(argc != 5) {
-        printf("usage: bfktoc -i source -o output.c");
+    /** argument checking\ @todo make it support at max 4 args */
+    if(argc != 4) {
+        fprintf(stderr, "usage: brfktoc file -o output.c");
         return 1;
     }
-    
     int i;
     for(i = 1; i < argc; i++) {
-        if(strcmp(argv[i], "-i") == 0) {
-            ++i;
-            input = fopen(argv[i], "r");
-            if(input == NULL) {
-                fprintf(stderr, "error loading input file\n");
-                return 1;
-            }
-        }
-        else if(strcmp(argv[i], "-o") == 0) {
+        int is_o = strcmp(argv[i], "-o") == 0;
+        // when "-o" found between pos 1 and 2
+        if(i != 3 && is_o) {
+            // go to the next argument and open the file
             ++i;
             output = fopen(argv[i], "w");
             if(output == NULL) {
-                fprintf(stderr, "error loading output file\n");
+                fprintf(stderr, "error: could not load output file\n");
+                return 1;
+            }
+        }
+        // when "-o" is the last parameter
+        else if(i == 3 && is_o) {
+            fprintf(stderr, "error: output argument declared but never read\n");
+        }
+        else {
+            // and input file is already loaded
+            if(input != NULL) {
+                fprintf(stderr, "error: more than one input file declared\n");
+                return 1;
+            }
+            input = fopen(argv[i], "r");
+            if(input == NULL) {
+                fprintf(stderr, "error: could not load input file\n");
                 return 1;
             }
         }

@@ -1,5 +1,6 @@
 *.exe
 *.o
+brfktoc
 TODO.md
 .vscode
 pe
