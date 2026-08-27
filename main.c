@@ -27,17 +27,22 @@ int main(int argc, char *argv[]) {
             ++i;
             output = fopen(argv[i], "w");
             if(output == NULL) {
+                if(input != NULL)
+                    fclose(input);
                 fprintf(stderr, "error: could not load output file\n");
                 return 1;
             }
         }
         /** when "-o" is the last parameter **/
         else if(i == 3 && is_o) {
+            if(input != NULL)
+                fclose(input);
             fprintf(stderr, "error: output argument declared but never read\n");
         }
         else {
             /** an input file is already loaded **/
             if(input != NULL) {
+                fclose(input);
                 fprintf(stderr, "error: more than one input file declared\n");
                 return 1;
             }
