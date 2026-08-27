@@ -3,7 +3,7 @@
 unsigned char MEM[MAXMEM];
 unsigned char *current = MEM;
 void init() {
-    int i = 0;
+    int i;
     for(i = 0; i < MAXMEM; i++) MEM[i] = 0;
 }
 void increment() {(*current)++;}

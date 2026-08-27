@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
 
     /** argument checking\ @todo make it support at max 4 args **/
     if(argc != 4) {
-        fprintf(stderr, "usage: brfktoc file -o output.c");
+        fprintf(stderr, "usage: brfktoc file -o output.c\n");
         return 1;
     }
     int i;
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
     /** loading header file containing logic, somehow actual header file can lead to errors? **/
     headerfile = fopen("brfk_logic.c", "r");
     if(headerfile == NULL) {
-        fprintf(stderr, "error: could not load header file");
+        fprintf(stderr, "error: could not load header file\n");
         return 1;
     }
     /** translating the program **/
