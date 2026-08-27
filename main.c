@@ -8,11 +8,12 @@
 #include <string.h>
 
 int putcmd(FILE*, char);
-void init_program(FILE*);
+void init_program(FILE*, FILE*);
 void end_program(FILE*);
 
 int main(int argc, char *argv[]) {
     FILE *input = NULL, *output = NULL;
+
     /** argument checking\ @todo make it support at max 4 args **/
     if(argc != 4) {
         fprintf(stderr, "usage: brfktoc file -o output.c");
@@ -38,6 +39,7 @@ int main(int argc, char *argv[]) {
             if(input != NULL)
                 fclose(input);
             fprintf(stderr, "error: output argument declared but never read\n");
+            return 1;
         }
         else {
             /** an input file is already loaded **/
@@ -54,8 +56,16 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    FILE *headerfile = NULL;
+    /** loading header file containing logic, somehow actual header file can lead to errors? **/
+    headerfile = fopen("brfk_logic.c", "r");
+    if(headerfile == NULL) {
+        fprintf(stderr, "error: could not load header file");
+        return 1;
+    }
     /** translating the program **/
-    init_program(output);
+    init_program(output, headerfile);
+    fclose(headerfile);
     int c;
     while((c = getc(input)) != EOF) {
         int puterr = putcmd(output, c);
@@ -118,33 +128,12 @@ int putcmd(FILE* outfile, char c) {
         return 1;
     }
 }
-void init_program(FILE* outfile) {
-    fprintf(outfile, "#include <stdio.h>\n\
-        #define MAXMEM 30000\n\
-        unsigned char MEM[MAXMEM];\n\
-        unsigned char *current = MEM;\n\
-        void init() {\n\
-        \tint i = 0;\n\
-        \tfor(i = 0; i < MAXMEM; i++) MEM[i] = 0;\n\
-        }\n\
-        void increment() {(*current)++;}\n\
-        void decrement() {(*current)--;}\n\
-        void move_left() {\n\
-        \tunsigned char* right = MEM+MAXMEM-1;\n\
-        \tunsigned char* left = MEM;\n\
-        \tif(current == left) current = right;\n\
-        \telse current--;\n\
-        }\n\
-        void move_right() {\n\
-        \tunsigned char* right = MEM+MAXMEM;\n\
-        \tunsigned char* left = MEM;\n\
-        \tif(current == right-1) current = left;\n\
-        \telse current++;\n\
-        }\n\
-        void put_current() {putchar(*current);}\n\
-        void get_current() { *current = getchar(); }\n\
+void init_program(FILE* outfile, FILE* logicheader) {
+    char initbuffer[630];
+    fscanf(logicheader, "%s", initbuffer);
+    fprintf(outfile, "%s\n\
         int main() {\n\
-        \tinit();\n");
+        \tinit();\n", initbuffer);
 }
 void end_program(FILE* outfile) {
     fprintf(outfile, "\treturn 0;\n");
