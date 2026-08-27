@@ -148,11 +148,16 @@ void init_program(FILE* outfile, FILE* logicheader) {
           from the logicheader to the outfile. ideally in a
           direct manner
     */
-    char initbuffer[630];
-    fscanf(logicheader, "%s", initbuffer);
-    fprintf(outfile, "%s\n\
+    char buffer[630];
+    size_t bytes_read = fread(buffer, 1, sizeof(buffer), logicheader);
+    size_t bytes_written = fwrite(buffer, 1, bytes_read, outfile);
+
+    if(bytes_written != bytes_read) {
+        fprintf(stderr, "error: could not write to output file");
+    }
+    fprintf(outfile, "\n\
         int main() {\n\
-        \tinit();\n", initbuffer);
+        \tinit();\n");
 }
 void end_program(FILE* outfile) {
     fprintf(outfile, "\treturn 0;\n");
